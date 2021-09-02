@@ -1,12 +1,15 @@
+import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
+import { resolvers, typeDefs } from './graphql';
 
-const app = express();
-const port = 8081;
+const start = async () => {
+	const app = express();
 
-app.get('/', (req, res) => {
-	res.send('hello worl323d');
-});
+	const server = new ApolloServer({ typeDefs, resolvers });
 
-app.listen(port, () => {
-	console.log(123);
-});
+	await server.start();
+	server.applyMiddleware({ app, path: '/api' });
+	app.listen(8080);
+};
+
+start();
