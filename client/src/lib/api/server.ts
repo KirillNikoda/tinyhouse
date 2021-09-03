@@ -1,11 +1,10 @@
-import { Listing } from '../types';
-
-interface Body {
+interface Body<TVariables> {
 	query: string;
+	variables?: TVariables;
 }
 
 export const server = {
-	fetch: async (body: Body): Promise<Listing[]> => {
+	fetch: async <TData = any, TVariables = any>(body: Body<TVariables>) => {
 		const res = await fetch('http://localhost:8080/api', {
 			method: 'POST',
 			headers: {
@@ -14,6 +13,6 @@ export const server = {
 			body: JSON.stringify(body)
 		});
 
-		return res.json();
+		return res.json() as Promise<{ data: TData }>;
 	}
 };

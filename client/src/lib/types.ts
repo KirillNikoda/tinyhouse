@@ -1,5 +1,5 @@
 export interface Listing {
-	_id: string;
+	id: string;
 	title: string;
 	image: string;
 	address: string;
@@ -8,4 +8,16 @@ export interface Listing {
 	numOfBeds: number;
 	numOfBaths: number;
 	rating: number;
+}
+
+export interface ListingsData {
+	listings: Listing[];
+}
+
+export interface DeleteListingData {
+	deleteListing: Listing;
+}
+
+export interface DeleteListingVariables {
+	id: string;
 }
