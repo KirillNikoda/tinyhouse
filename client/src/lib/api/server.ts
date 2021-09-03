@@ -13,6 +13,10 @@ export const server = {
 			body: JSON.stringify(body)
 		});
 
+		if (!res.ok) {
+			throw new Error('Error while querying server.');
+		}
+
 		return res.json() as Promise<{ data: TData }>;
 	}
 };

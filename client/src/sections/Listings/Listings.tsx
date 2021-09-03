@@ -1,5 +1,5 @@
-import { FC, useCallback, useEffect, useState } from 'react';
-import { server, useQuery } from '../../lib/api';
+import { FC } from 'react';
+import { server, useMutation, useQuery } from '../../lib/api';
 import { DeleteListingData, DeleteListingVariables, Listing, ListingsData } from '../../lib/types';
 
 const LISTINGS = `
@@ -26,17 +26,15 @@ interface Props {
 }
 
 export const Listings: FC<Props> = ({ title, children }) => {
-	const { data, refetch } = useQuery<ListingsData>(LISTINGS);
+	const { data, loading, refetch } = useQuery<ListingsData>(LISTINGS);
 
-	const deleteListing = async () => {
-		await server.fetch<DeleteListingData, DeleteListingVariables>({
-			query: DELETE_LISTING,
-			variables: {
-				id: '61324c19a529422b3832453b'
-			}
-		});
+	const [deleteListing, { loading: deleteListingLoading, error: deleteListingError }] = useMutation<
+		DeleteListingData,
+		DeleteListingVariables
+	>(DELETE_LISTING);
 
-		refetch();
+	const handleDeleteListing = async (id: string) => {
+		await deleteListing({ id });
 	};
 
 	const listingsList = data ? (
@@ -47,12 +45,16 @@ export const Listings: FC<Props> = ({ title, children }) => {
 		</ul>
 	) : null;
 
+	if (loading) {
+		return <h2>Loading...</h2>;
+	}
+
 	return (
 		<div>
 			<h2>Hello listings</h2>
-			{listingsList ? listingsList : 'Loading...'}
+			{listingsList}
 			<button onClick={refetch}>Fetch listingss</button>
-			<button onClick={deleteListing}>Delete listingss</button>
+			<button onClick={() => handleDeleteListing('123')}>Delete listingss</button>
 		</div>
 	);
 };

@@ -3,17 +3,31 @@ import { server } from '.';
 
 interface State<TData> {
 	data: TData | null;
+	loading: boolean;
+	error: boolean;
 }
 
-export const useQuery = <TData = any>(query: string) => {
+interface QueryResult<TData> extends State<TData> {
+	refetch: () => void;
+}
+
+export const useQuery = <TData = any>(query: string): QueryResult<TData> => {
 	const [state, setState] = useState<State<TData>>({
-		data: null
+		data: null,
+		loading: false,
+		error: false
 	});
 
 	const fetchApi = useCallback(async () => {
-		const { data } = await server.fetch<TData>({ query });
-		setState({ data });
-	}, [query]);
+		try {
+			setState({ ...state, loading: true, error: false });
+			const { data } = await server.fetch<TData>({ query });
+			setState({ data, loading: false, error: false });
+		} catch (e) {
+			setState({ ...state, error: true });
+			console.error(e);
+		}
+	}, [state, query]);
 
 	useEffect(() => {
 		fetchApi();
