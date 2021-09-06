@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { Database } from '../lib/types';
+import { Booking, Database, Listing, User } from '../lib/types';
 
 const url = 'mongodb://127.0.0.1:27017/tinyhouse';
 
@@ -9,6 +9,8 @@ export const connectDatabase = async (): Promise<Database> => {
 	const db = client.db('tinyhouse');
 
 	return {
-		listings: db.collection('test_listings')
+		bookings: db.collection<Booking>('bookings'),
+		listings: db.collection<Listing>('listings'),
+		users: db.collection<User>('users')
 	};
 };
